@@ -1,5 +1,6 @@
 ---
 output: pdf_document
+header-includes: \usepackage{dcolumn}
 ---
 
 ```{r setup, include=FALSE}
@@ -20,11 +21,31 @@ Import Data
 ```{r}
 plotting_data <- read.csv("/Volumes/devbrainlab/IndividualDifferencesMentalizing/IDMT_Data_Complete.csv")
 
+demographics_data <- read.csv("/Volumes/devbrainlab/IndividualDifferencesMentalizing/NATE_PROLIFIC_COMPLETE.csv")
 ```
 
+Demographics
+```{r mylatextable1, results="asis"}
+demographics_data <- demographics_data %>%
+  filter(status=="APPROVED")
+
+stargazer(demographics_data, nobs=FALSE,median=TRUE, omit.summary.stat = c("p25", "p75"))
+
+```
+
+
 Summary Stats
-```{r mylatextable, results = "asis"}
-stargazer(plotting_data[, 3:ncol(plotting_data)], type='latex')
+```{r mylatextable2, results = "asis"}
+stargazer(plotting_data[, 3:(ncol(plotting_data)-1)], type='latex', median=TRUE, nobs=FALSE, omit.summary.stat = c("p25", "p75"))
+#take keysar out
+
+#column.labels = c("Good", "Better")
+#stargazer(output, output2, type = "html", 
+        #  title            = "These are awesome results!",
+      #    covariate.labels = c("Temperature", "Wind speed", "Rain (inches)",
+      #                         "2nd quarter", "3rd quarter", "Fourth quarter"),
+      #    dep.var.caption  = "A better caption",
+      #    dep.var.labels   = "Flight delay (in minutes)")
 ```
 
 
@@ -80,20 +101,27 @@ corstars <-function(x, method=c("pearson", "spearman"), removeTriangle=c("upper"
 corr code
 ```{r}
 data1 <- plotting_data %>%
-  rename(dot_alt_rt = dot_altercentric_interference, dot_ego_rt = dot_egocentric_interference, dot_alt_err = dot_altercentric_errors, dot_ego_err = dot_egocentric_errors, director_alt = director_altercentrism, director_ego = director_egocentrism)
+  rename(dot_alt_rt = dot_altercentric_interference, dot_ego_rt = dot_egocentric_interference, dot_alt_err = dot_altercentric_errors, dot_ego_err = dot_egocentric_errors, director_alt = director_altercentrism, director_ego = director_egocentrism, keysar_ego = keysar_score)
+
+viz <- data1 %>%
+  select(director_alt, director_ego, dot_alt_rt, dot_ego_rt, dot_alt_err, dot_ego_err)
+correlationmatrix <- cor(data1[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err")])
+#fluid int breaks this, possibly because of negative values
 
 ```
 
-```{r latextable, results = "asis"}
+```{r mylatextable3, results = "asis"}
 #options(tinytex.verbose = TRUE)
 
-correlationmatrix <- cor(data1[,c("director_alt", "director_ego", "dot_alt_rt", "dot_ego_rt", "dot_alt_err")])
-#fluid int breaks this, possibly because of negative values
-stargazer(correlationmatrix, title="Table 2")
+
+#add , align = TRUE but currently breaks it (illegal character in array org)
+#, rownames = TRUE, summary = FALSE
+stargazer(correlationmatrix)
+
+
 
 #fullcorrelationmatrix <- cor(plotting_data[, !(colnames(plotting_data) %in% c("X", "participant_private_id", "six_nine"))])
 #fluid int breaks this, possibly because of negative values
 #stargazer(fullcorrelationmatrix, title="Table 1")
 
 ```
-
