@@ -1,0 +1,99 @@
+---
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+packages <-  c("tidyverse",
+               "reshape2",
+               "nlme", "lme4",
+               "data.table", "psych",
+               "parallel","lubridate",
+              "ggpubr", "broom", "table1", "apaTables", "psych", "stargazer", "corrplot", "tinytex")
+if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
+  install.packages(setdiff(packages, rownames(installed.packages())))  
+}
+lapply(packages, library, character.only = TRUE)
+```
+
+Import Data
+```{r}
+plotting_data <- read.csv("/Volumes/devbrainlab/IndividualDifferencesMentalizing/IDMT_Data_Complete.csv")
+
+```
+
+Summary Stats
+```{r mylatextable, results = "asis"}
+stargazer(plotting_data[, 3:ncol(plotting_data)], type='latex')
+```
+
+
+Correlation Matrices
+
+```{r, echo=FALSE}
+
+corstars <-function(x, method=c("pearson", "spearman"), removeTriangle=c("upper", "lower"),
+                     result=c("none", "html", "latex")){
+    #Compute correlation matrix
+    require(Hmisc)
+    x <- as.matrix(x)
+    correlation_matrix<-rcorr(x, type=method[1])
+    R <- correlation_matrix$r # Matrix of correlation coeficients
+    p <- correlation_matrix$P # Matrix of p-value 
+    
+    ## Define notions for significance levels; spacing is important.
+    mystars <- ifelse(p < .0001, "****", ifelse(p < .001, "*** ", ifelse(p < .01, "**  ", ifelse(p < .05, "*   ", "    "))))
+    
+    ## trunctuate the correlation matrix to two decimal
+    R <- format(round(cbind(rep(-1.11, ncol(x)), R), 2))[,-1]
+    
+    ## build a new matrix that includes the correlations with their apropriate stars
+    Rnew <- matrix(paste(R, mystars, sep=""), ncol=ncol(x))
+    diag(Rnew) <- paste(diag(R), " ", sep="")
+    rownames(Rnew) <- colnames(x)
+    colnames(Rnew) <- paste(colnames(x), "", sep="")
+    
+    ## remove upper triangle of correlation matrix
+    if(removeTriangle[1]=="upper"){
+      Rnew <- as.matrix(Rnew)
+      Rnew[upper.tri(Rnew, diag = TRUE)] <- ""
+      Rnew <- as.data.frame(Rnew)
+    }
+    
+    ## remove lower triangle of correlation matrix
+    else if(removeTriangle[1]=="lower"){
+      Rnew <- as.matrix(Rnew)
+      Rnew[lower.tri(Rnew, diag = TRUE)] <- ""
+      Rnew <- as.data.frame(Rnew)
+    }
+    
+    ## remove last column and return the correlation matrix
+    Rnew <- cbind(Rnew[1:length(Rnew)-1])
+    if (result[1]=="none") return(Rnew)
+    else{
+      if(result[1]=="html") print(xtable(Rnew), type="html")
+      else print(xtable(Rnew), type="latex") 
+    }
+}
+```
+
+corr code
+```{r}
+data1 <- plotting_data %>%
+  rename(dot_alt_rt = dot_altercentric_interference, dot_ego_rt = dot_egocentric_interference, dot_alt_err = dot_altercentric_errors, dot_ego_err = dot_egocentric_errors, director_alt = director_altercentrism, director_ego = director_egocentrism)
+
+```
+
+```{r latextable, results = "asis"}
+#options(tinytex.verbose = TRUE)
+
+correlationmatrix <- cor(data1[,c("director_alt", "director_ego", "dot_alt_rt", "dot_ego_rt", "dot_alt_err")])
+#fluid int breaks this, possibly because of negative values
+stargazer(correlationmatrix, title="Table 2")
+
+#fullcorrelationmatrix <- cor(plotting_data[, !(colnames(plotting_data) %in% c("X", "participant_private_id", "six_nine"))])
+#fluid int breaks this, possibly because of negative values
+#stargazer(fullcorrelationmatrix, title="Table 1")
+
+```
+

@@ -1,0 +1,70 @@
+---
+title: "dot"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+root_path="/Users/millslabmanager/Documents/idfm_01/21/"
+
+packages <-  c("tidyverse",
+               "reshape2",
+               "nlme", "lme4",
+               "data.table", "psych",
+               "parallel","lubridate",
+               "mgcv", "ggpubr", "broom", "table1", "apaTables", "readxl", "ggalluvial")
+if (length(setdiff(packages, rownames(installed.packages()))) > 0) {
+  install.packages(setdiff(packages, rownames(installed.packages())))  
+}
+lapply(packages, library, character.only = TRUE)
+```
+
+## R Markdown
+
+Dot Tasks
+```{r}
+dot1 <- read.csv("/Users/millslabmanager/Documents/idfm_01_21/data_exp_23421-v7_task-hpv4.csv") %>%
+  select(Participant.Public.ID, Trial.Number, Zone.Name, Correct)%>%
+  filter(Zone.Name == "responseB") %>%
+  group_by(Participant.Public.ID) %>%
+  summarize(sum=sum(Correct))
+
+dot2 <- read.csv("/Users/millslabmanager/Documents/idfm_01_21/data_exp_23421-v7_task-xegk.csv") %>%
+  select(Participant.Public.ID, Trial.Number, Zone.Name, Correct)%>%
+  filter(Zone.Name == "responseB") %>%
+  group_by(Participant.Public.ID) %>%
+  summarize(sum=sum(Correct))
+  
+dot3 <- read.csv("/Users/millslabmanager/Documents/idfm_01_21/data_exp_23421-v7_task-9md9.csv") %>%
+  select(Participant.Public.ID, Trial.Number, Zone.Name, Correct)%>%
+  filter(Zone.Name == "responseB") %>%
+  group_by(Participant.Public.ID) %>%
+  summarize(sum=sum(Correct))
+
+
+dot4 <- read.csv("/Users/millslabmanager/Documents/idfm_01_21/data_exp_23421-v7_task-ny7w.csv") %>%
+  select(Participant.Public.ID, Trial.Number, Zone.Name, Correct)%>%
+  filter(Zone.Name == "responseB") %>%
+  group_by(Participant.Public.ID) %>%
+  summarize(sum=sum(Correct))
+```
+
+Director Task
+```{r}
+director_dam <- read.csv("/Users/millslabmanager/Documents/idfm_01_21/data_exp_23421-v7_task-3svp.csv")
+director_daf <- read.csv("/Users/millslabmanager/Documents/idfm_01_21/data_exp_23421-v7_task-qhy1.csv")
+director_dpm <- read.csv("/Users/millslabmanager/Documents/idfm_01_21/data_exp_23421-v7_task-bf4h.csv")
+director_dpf <- read.csv("/Users/millslabmanager/Documents/idfm_01_21/data_exp_23421-v7_task-9t8o.csv")
+#merge into one file 
+  director <- bind_rows(director_dam, director_daf, director_dpm, director_dpf) %>%
+  select(Participant.Public.ID, Event, ItemCorrect, Item, CorrectAnswer) %>%
+  filter(Event == "PLACE") 
+  
+director$ItemCorrect[is.na(director$ItemCorrect)] <- 0
+
+  director <- director %>% 
+    group_by(Participant.Public.ID) %>%
+    summarize(sum=sum(ItemCorrect))
+
+
+```
