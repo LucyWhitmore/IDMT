@@ -22,12 +22,15 @@ Import Data
 plotting_data <- read.csv("/Volumes/devbrainlab/IndividualDifferencesMentalizing/IDMT_Data_Complete.csv")
 
 demographics_data <- read.csv("/Volumes/devbrainlab/IndividualDifferencesMentalizing/NATE_PROLIFIC_COMPLETE.csv")
+
+updated_plotting <- read.csv("/Volumes/devbrainlab/IndividualDifferencesMentalizing/withfluid.csv")
 ```
 
 Demographics
 ```{r mylatextable1, results="asis"}
 demographics_data <- demographics_data %>%
-  filter(status=="APPROVED")
+  filter(status=="APPROVED") %>%
+  select("age", "Sex")
 
 stargazer(demographics_data, nobs=FALSE,median=TRUE, omit.summary.stat = c("p25", "p75"))
 
@@ -36,9 +39,12 @@ stargazer(demographics_data, nobs=FALSE,median=TRUE, omit.summary.stat = c("p25"
 
 Summary Stats
 ```{r mylatextable2, results = "asis"}
-stargazer(plotting_data[, 3:(ncol(plotting_data)-1)], type='latex', median=TRUE, nobs=FALSE, omit.summary.stat = c("p25", "p75"))
-#take keysar out
+updated_plotting <- updated_plotting %>%
+  select(-c("X", "participant_private_id","fluid_int", "keysar_score"))
 
+stargazer(updated_plotting, type='latex', median=TRUE, nobs=FALSE, omit.summary.stat = c("p25", "p75"))
+
+#updated_plotting[, 3:(ncol(plotting_data)-1)]
 #column.labels = c("Good", "Better")
 #stargazer(output, output2, type = "html", 
         #  title            = "These are awesome results!",
@@ -105,8 +111,16 @@ data1 <- plotting_data %>%
 
 viz <- data1 %>%
   select(director_alt, director_ego, dot_alt_rt, dot_ego_rt, dot_alt_err, dot_ego_err)
-correlationmatrix <- cor(data1[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err")])
+
+viz$dot_alt_err <- as.numeric(viz$dot_alt_err)
+viz$dot_ego_err <- as.numeric(viz$dot_ego_err)
+
+correlationmatrix <- cor(data1[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err")])
+
+
+
 #fluid int breaks this, possibly because of negative values
+
 
 ```
 
@@ -116,12 +130,12 @@ correlationmatrix <- cor(data1[,c("director_alt","director_ego", "dot_alt_rt","d
 
 #add , align = TRUE but currently breaks it (illegal character in array org)
 #, rownames = TRUE, summary = FALSE
-stargazer(correlationmatrix)
+stargazer(correlationmatrix, align=TRUE)
 
 
 
 #fullcorrelationmatrix <- cor(plotting_data[, !(colnames(plotting_data) %in% c("X", "participant_private_id", "six_nine"))])
 #fluid int breaks this, possibly because of negative values
-#stargazer(fullcorrelationmatrix, title="Table 1")
+#stargazer(fullcorrelationmatrix)
 
 ```
