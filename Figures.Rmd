@@ -28,6 +28,8 @@ updated_plotting <- read.csv("/Volumes/devbrainlab/IndividualDifferencesMentaliz
 
 Demographics
 ```{r mylatextable1, results="asis"}
+
+rejected_count <- table(demographics_data$status)
 demographics_data <- demographics_data %>%
   filter(status=="APPROVED") %>%
   select("age", "Sex")
@@ -57,6 +59,7 @@ stargazer(updated_plotting, type='latex', median=TRUE, nobs=FALSE, omit.summary.
 
 Correlation Matrices
 
+Corstars Function
 ```{r, echo=FALSE}
 
 corstars <-function(x, method=c("pearson", "spearman"), removeTriangle=c("upper", "lower"),
@@ -138,4 +141,29 @@ stargazer(correlationmatrix, align=TRUE)
 #fluid int breaks this, possibly because of negative values
 #stargazer(fullcorrelationmatrix)
 
+```
+
+Egocentrism & Altercentrism on Dot Task
+```{r}
+```
+Egocentricism & Altercentrism Across Tasks
+```{r}
+```
+Egocentrism & Altercentrism & MASC
+```{r}
+```
+Egocentrism/Altercentrism & Certainty/Uncertainty
+```{r}
+```
+Fluid Intelligence & Mentalizing
+```{r}
+```
+Self-reported psychopathology & Mentalizing
+```{r}
+```
+Psychopathology & Mentalizing
+```{r}
+```
+Sense of Power, Agent/Patient perspective, social interaction anxiety, & mentalizing
+```{r}
 ```
