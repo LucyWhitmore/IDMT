@@ -126,7 +126,7 @@ correlationmatrix <- cor(data1[,c("director_alt","director_ego", "dot_alt_rt","d
 
 
 ```
-
+Table 3
 ```{r mylatextable3, results = "asis"}
 #options(tinytex.verbose = TRUE)
 
@@ -145,25 +145,44 @@ stargazer(correlationmatrix, align=TRUE)
 
 Egocentrism & Altercentrism on Dot Task
 ```{r}
+table4 <- cor(updated_plotting_data[,c("dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err")])
+stargazer(table4, align=TRUE)
 ```
 Egocentricism & Altercentrism Across Tasks
 ```{r}
+table5 <- cor(updated_plotting_data[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err")])
+stargazer(table5, align=TRUE)
 ```
 Egocentrism & Altercentrism & MASC
 ```{r}
+table6 <- cor(updated_plotting_data[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "masc_accuracy", "masc_no_ment", "masc_over_ment", "masc_under_ment")])
+stargazer(table6, align=TRUE)
+#likely needs 6/9
 ```
 Egocentrism/Altercentrism & Certainty/Uncertainty
 ```{r}
+table7 <- cor(updated_plotting_data[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "rfq_certainty", "rfq_uncertainty")])
+stargazer(table7, align=TRUE)
 ```
 Fluid Intelligence & Mentalizing
 ```{r}
+table8 <- 
+  stargazer(table8, align=TRUE)
 ```
 Self-reported psychopathology & Mentalizing
 ```{r}
+table9 <- 
+  stargazer(table9, align=TRUE)
 ```
 Psychopathology & Mentalizing
 ```{r}
+table10 <- cor(updated_plotting_data[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "tpm_boldness", "tpm_disinhibition", "tpm_meanness", "tpm_total")])
+stargazer(table10, align=TRUE)
 ```
 Sense of Power, Agent/Patient perspective, social interaction anxiety, & mentalizing
 ```{r}
+table11<- cor(updated_plotting_data[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "sense_of_power", "pq_agent", "pq_recipient", "social_interaction_anxiety")])
+stargazer(table11, align=TRUE)
+
+#can't find social anxiety
 ```
