@@ -232,3 +232,12 @@ stargazer(table11, align=TRUE,column.sep.width = "-8pt", font.size="tiny")
 
 #can't find social anxiety
 ```
+
+Big 5 and Mentalizing
+```{r mylatextable12, results = "asis"}
+table12<- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "masc_accuracy", "masc_no_ment", "masc_over_ment", "masc_under_ment", "tipi_agreeableness", "tipi_conscientiousness", "tipi_emotional_stability", "tipi_extroversion", "tipi_openness")])
+
+stargazer(table12, align=TRUE,column.sep.width = "-8pt", font.size="tiny")
+
+
+```
