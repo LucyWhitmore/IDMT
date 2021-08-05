@@ -57,6 +57,42 @@ stargazer(updated_plotting, type='latex', median=TRUE, nobs=FALSE, omit.summary.
 ```
 
 
+Function for resizing stargazer tables
+```{r}
+resizebox.stargazer = function(..., tab.width = "!", tab.height = "!"
+                               ){
+  #Activate str_which() function:
+  require(stringr) 
+
+  #Extract the code returned from stargazer()
+  res = capture.output(
+    stargazer::stargazer(...)
+    )
+
+  #Render the arguments:
+  tab.width = tab.width
+  tab.height = tab.height
+
+  #Attach "}" between \end{tabular} and \end{table}
+  res = 
+    prepend(res, "}", before = length(res))
+
+  #Input \resizebox before \begin{tabular}
+  res = 
+    c(res[1:str_which(res, "^\\\\begin\\{tabular\\}.*")-1],
+      paste0("\\resizebox{",tab.width,"}{",tab.height,"}{%"),
+      res[str_which(res, "^\\\\begin\\{tabular\\}.*"):length(res)]
+      )
+
+  #Produce the whole strings
+  cat(res, sep = "\n")
+}
+
+
+
+#resizebox.stargazer(..., tab.width = "0.7\\textwidth")
+```
+
 Correlation Matrices
 
 Corstars Function
@@ -109,16 +145,16 @@ corstars <-function(x, method=c("pearson", "spearman"), removeTriangle=c("upper"
 
 corr code
 ```{r}
-data1 <- plotting_data %>%
-  rename(dot_alt_rt = dot_altercentric_interference, dot_ego_rt = dot_egocentric_interference, dot_alt_err = dot_altercentric_errors, dot_ego_err = dot_egocentric_errors, director_alt = director_altercentrism, director_ego = director_egocentrism, keysar_ego = keysar_score)
+updated_plotting <- updated_plotting %>%
+  rename(dot_alt_rt = dot_altercentric_interference, dot_ego_rt = dot_egocentric_interference, dot_alt_err = dot_altercentric_errors, dot_ego_err = dot_egocentric_errors, director_alt = director_altercentrism, director_ego = director_egocentrism)
+#, keysar_ego = keysar_score
+#viz <- updated_plotting %>%
+ # select(director_alt, director_ego, dot_alt_rt, dot_ego_rt, dot_alt_err, dot_ego_err)
 
-viz <- data1 %>%
-  select(director_alt, director_ego, dot_alt_rt, dot_ego_rt, dot_alt_err, dot_ego_err)
+updated_plotting$dot_alt_err <- as.numeric(updated_plotting$dot_alt_err)
+updated_plotting$dot_ego_err <- as.numeric(updated_plotting$dot_ego_err)
 
-viz$dot_alt_err <- as.numeric(viz$dot_alt_err)
-viz$dot_ego_err <- as.numeric(viz$dot_ego_err)
-
-correlationmatrix <- cor(data1[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err")])
+correlationmatrix <- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err")])
 
 
 
@@ -137,6 +173,7 @@ stargazer(correlationmatrix, align=TRUE)
 
 
 
+
 #fullcorrelationmatrix <- cor(plotting_data[, !(colnames(plotting_data) %in% c("X", "participant_private_id", "six_nine"))])
 #fluid int breaks this, possibly because of negative values
 #stargazer(fullcorrelationmatrix)
@@ -144,45 +181,54 @@ stargazer(correlationmatrix, align=TRUE)
 ```
 
 Egocentrism & Altercentrism on Dot Task
-```{r}
-table4 <- cor(updated_plotting_data[,c("dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err")])
+```{r mylatextable4, results = "asis"}
+table4 <- cor(updated_plotting[,c("dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err")])
 stargazer(table4, align=TRUE)
 ```
 Egocentricism & Altercentrism Across Tasks
-```{r}
-table5 <- cor(updated_plotting_data[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err")])
+```{r mylatextable5, results = "asis"}
+table5 <- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err")])
 stargazer(table5, align=TRUE)
 ```
 Egocentrism & Altercentrism & MASC
-```{r}
-table6 <- cor(updated_plotting_data[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "masc_accuracy", "masc_no_ment", "masc_over_ment", "masc_under_ment")])
-stargazer(table6, align=TRUE)
+```{r mylatextable6, results = "asis"}
+table6 <- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "masc_accuracy", "masc_no_ment", "masc_over_ment", "masc_under_ment")])
+stargazer(table6, align=TRUE, column.sep.width = "-8pt", font.size="tiny")
+
 #likely needs 6/9
+#column.sep.width = "-10pt",
 ```
 Egocentrism/Altercentrism & Certainty/Uncertainty
-```{r}
-table7 <- cor(updated_plotting_data[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "rfq_certainty", "rfq_uncertainty")])
-stargazer(table7, align=TRUE)
+```{r mylatextable7, results = "asis"}
+table7 <- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "rfq_certainty", "rfq_uncertainty")])
+stargazer(table7, align=TRUE,column.sep.width = "-8pt", font.size="tiny")
 ```
 Fluid Intelligence & Mentalizing
-```{r}
-table8 <- 
-  stargazer(table8, align=TRUE)
+```{r mylatextable8, results = "asis"}
+table8 <- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "masc_accuracy", "masc_no_ment", "masc_over_ment", "masc_under_ment", "rfq_certainty", "rfq_uncertainty", "keysar_score", "fluid_int")])
+
+stargazer(table8, align=TRUE,column.sep.width = "-8pt", font.size="tiny")
+
+#(4 masc, 4 dot, 2 director, 2 rfq, 1 keysar score which I think we should call "ambiguous reference egocentrism") and the fluid intelligence score.
+
 ```
 Self-reported psychopathology & Mentalizing
-```{r}
-table9 <- 
-  stargazer(table9, align=TRUE)
+```{r mylatextable9, results = "asis"}
+table9 <- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "masc_accuracy", "masc_no_ment", "masc_over_ment", "masc_under_ment", "rfq_certainty", "rfq_uncertainty", "keysar_score", "bsi_anxiety", "bsi_depression", "bsi_somatization", "pai_bor_affective_instability", "pai_bor_identity_problems", "pai_bor_negative_relationships", "pai_bor_self_harm", "pai_bor_total", "ders_awareness", "ders_clarity", "ders_goals", "ders_impluse", "ders_nonacceptance", "ders_strategies", "tpm_boldness", "tpm_disinhibition", "tpm_meanness", "tpm_total")])
+
+stargazer(table9, align=TRUE,column.sep.width = "-8pt", font.size="tiny")
+
+#all the mentalizing variables and the variables from the bsi-18, pai-bor, ders and tpm.
 ```
 Psychopathology & Mentalizing
-```{r}
-table10 <- cor(updated_plotting_data[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "tpm_boldness", "tpm_disinhibition", "tpm_meanness", "tpm_total")])
-stargazer(table10, align=TRUE)
+```{r mylatextable10, results = "asis"}
+table10 <- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "tpm_boldness", "tpm_disinhibition", "tpm_meanness", "tpm_total")])
+stargazer(table10, align=TRUE,column.sep.width = "-8pt", font.size="tiny")
 ```
 Sense of Power, Agent/Patient perspective, social interaction anxiety, & mentalizing
-```{r}
-table11<- cor(updated_plotting_data[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "sense_of_power", "pq_agent", "pq_recipient", "social_interaction_anxiety")])
-stargazer(table11, align=TRUE)
+```{r mylatextable11, results = "asis"}
+table11<- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "sense_of_power", "pq_agent", "pq_recipient", "social_interaction_anxiety")])
+stargazer(table11, align=TRUE,column.sep.width = "-8pt", font.size="tiny")
 
 #can't find social anxiety
 ```
