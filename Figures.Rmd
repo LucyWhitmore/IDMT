@@ -24,6 +24,8 @@ plotting_data <- read.csv("/Volumes/devbrainlab/IndividualDifferencesMentalizing
 demographics_data <- read.csv("/Volumes/devbrainlab/IndividualDifferencesMentalizing/NATE_PROLIFIC_COMPLETE.csv")
 
 updated_plotting <- read.csv("/Volumes/devbrainlab/IndividualDifferencesMentalizing/withfluid.csv")
+
+outputdir <- "/Volumes/devbrainlab/IndividualDifferencesMentalizing/Corrplots/"
 ```
 
 Demographics
@@ -145,12 +147,12 @@ corstars <-function(x, method=c("pearson", "spearman"), removeTriangle=c("upper"
 
 corr code
 ```{r}
+
 updated_plotting <- updated_plotting %>%
-  rename(dot_alt_rt = dot_altercentric_interference, dot_ego_rt = dot_egocentric_interference, dot_alt_err = dot_altercentric_errors, dot_ego_err = dot_egocentric_errors, director_alt = director_altercentrism, director_ego = director_egocentrism)
+ rename(dot_alt_rt = dot_altercentric_interference, dot_ego_rt = dot_egocentric_interference, dot_alt_err = dot_altercentric_errors, dot_ego_err = dot_egocentric_errors, director_alt = director_altercentrism, director_ego = director_egocentrism)
 #, keysar_ego = keysar_score
 #viz <- updated_plotting %>%
  # select(director_alt, director_ego, dot_alt_rt, dot_ego_rt, dot_alt_err, dot_ego_err)
-
 updated_plotting$dot_alt_err <- as.numeric(updated_plotting$dot_alt_err)
 updated_plotting$dot_ego_err <- as.numeric(updated_plotting$dot_ego_err)
 
@@ -181,63 +183,184 @@ stargazer(correlationmatrix, align=TRUE)
 ```
 
 Egocentrism & Altercentrism on Dot Task
-```{r mylatextable4, results = "asis"}
+```{r}
 table4 <- cor(updated_plotting[,c("dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err")])
-stargazer(table4, align=TRUE)
+
+png(filename=paste0(outputdir,"ego_alt_dor_corrplot.png"),
+    width=7,height=7,units="in",res=300,bg="transparent")
+corrplot::corrplot.mixed(table4,
+                         lower = "number",
+                         lower.col = "black",
+                         upper = "ellipse",
+                         order="hclust",
+                        # cl.lim = -1:1,
+                         tl.pos = "lt",
+                         tl.cex = .5,
+                         tl.col = "black",
+                         number.cex = .5,
+                         mar=c(0,0,1,0))
+dev.off()
 ```
 Egocentricism & Altercentrism Across Tasks
-```{r mylatextable5, results = "asis"}
+```{r}
 table5 <- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err")])
-stargazer(table5, align=TRUE)
+
+png(filename=paste0(outputdir,"ego_alt_across_tasks_corrplot.png"),
+    width=7,height=7,units="in",res=300,bg="transparent")
+corrplot::corrplot.mixed(table5,
+                         lower = "number",
+                         lower.col = "black",
+                         upper = "ellipse",
+                         order="hclust",
+                        # cl.lim = -1:1,
+                         tl.pos = "lt",
+                         tl.cex = .5,
+                         tl.col = "black",
+                         number.cex = .5,
+                         mar=c(0,0,1,0))
+dev.off()
 ```
 Egocentrism & Altercentrism & MASC
-```{r mylatextable6, results = "asis"}
+```{r}
 table6 <- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "masc_accuracy", "masc_no_ment", "masc_over_ment", "masc_under_ment")])
-stargazer(table6, align=TRUE, column.sep.width = "-8pt", font.size="tiny")
 
+png(filename=paste0(outputdir,"ego_alt_masc.png"),
+    width=7,height=7,units="in",res=300,bg="transparent")
+corrplot::corrplot.mixed(table6,
+                         lower = "number",
+                         lower.col = "black",
+                         upper = "ellipse",
+                         order="hclust",
+                        # cl.lim = -1:1,
+                         tl.pos = "lt",
+                         tl.cex = .5,
+                         tl.col = "black",
+                         number.cex = .5,
+                         mar=c(0,0,1,0))
+dev.off()
 #likely needs 6/9
 #column.sep.width = "-10pt",
 ```
 Egocentrism/Altercentrism & Certainty/Uncertainty
-```{r mylatextable7, results = "asis"}
+```{r}
 table7 <- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "rfq_certainty", "rfq_uncertainty")])
-stargazer(table7, align=TRUE,column.sep.width = "-8pt", font.size="tiny")
+png(filename=paste0(outputdir,"ego_alt_certainty_corrplot.png"),
+    width=7,height=7,units="in",res=300,bg="transparent")
+corrplot::corrplot.mixed(table7,
+                         lower = "number",
+                         lower.col = "black",
+                         upper = "ellipse",
+                         order="hclust",
+                        # cl.lim = -1:1,
+                         tl.pos = "lt",
+                         tl.cex = .5,
+                         tl.col = "black",
+                         number.cex = .5,
+                         mar=c(0,0,1,0))
+dev.off()
 ```
 Fluid Intelligence & Mentalizing
-```{r mylatextable8, results = "asis"}
-table8 <- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "masc_accuracy", "masc_no_ment", "masc_over_ment", "masc_under_ment", "rfq_certainty", "rfq_uncertainty", "keysar_score", "fluid_int")])
+```{r}
+table8 <- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "masc_accuracy", "masc_no_ment", "masc_over_ment", "masc_under_ment", "rfq_certainty", "rfq_uncertainty","keysar_score","fluid_int")])
 
-stargazer(table8, align=TRUE,column.sep.width = "-8pt", font.size="tiny")
+png(filename=paste0(outputdir,"fluid_int_mentalizing_corrplot.png"),
+    width=7,height=7,units="in",res=300,bg="transparent")
+corrplot::corrplot.mixed(table8,
+                         lower = "number",
+                         lower.col = "black",
+                         upper = "ellipse",
+                         order="hclust",
+                        # cl.lim = -1:1,
+                         tl.pos = "lt",
+                         tl.cex = .5,
+                         tl.col = "black",
+                         number.cex = .5,
+                         mar=c(0,0,1,0))
+dev.off()
 
 #(4 masc, 4 dot, 2 director, 2 rfq, 1 keysar score which I think we should call "ambiguous reference egocentrism") and the fluid intelligence score.
-
+#, "rfq_certainty", "rfq_uncertainty", "keysar_score", "fluid_int"
 ```
 Self-reported psychopathology & Mentalizing
-```{r mylatextable9, results = "asis"}
-table9 <- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "masc_accuracy", "masc_no_ment", "masc_over_ment", "masc_under_ment", "rfq_certainty", "rfq_uncertainty", "keysar_score", "bsi_anxiety", "bsi_depression", "bsi_somatization", "pai_bor_affective_instability", "pai_bor_identity_problems", "pai_bor_negative_relationships", "pai_bor_self_harm", "pai_bor_total", "ders_awareness", "ders_clarity", "ders_goals", "ders_impluse", "ders_nonacceptance", "ders_strategies", "tpm_boldness", "tpm_disinhibition", "tpm_meanness", "tpm_total")])
+```{r}
+table9 <- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "masc_accuracy", "masc_no_ment", "masc_over_ment", "masc_under_ment", "rfq_certainty", "rfq_uncertainty", "keysar_score", "bsi_anxiety", "bsi_depression", "bsi_somatization", "pai_bor_affective_instability", "pai_bor_identity_problems", "pai_bor_negative_relationships", "pai_bor_self_harm", "pai_bor_total", "ders_awareness", "ders_clarity", "ders_goals", "ders_impulse", "ders_non_acceptance", "ders_strategies", "tpm_boldness", "tpm_disinhibition", "tpm_meanness", "tpm_total")])
 
-stargazer(table9, align=TRUE,column.sep.width = "-8pt", font.size="tiny")
+png(filename=paste0(outputdir,"self_report_psychopathology_mentalizing_corrplot.png"),
+    width=7,height=7,units="in",res=300,bg="transparent")
+corrplot::corrplot.mixed(table9,
+                         lower = "number",
+                         lower.col = "black",
+                         upper = "ellipse",
+                         order="hclust",
+                        # cl.lim = -1:1,
+                         tl.pos = "lt",
+                         tl.cex = .5,
+                         tl.col = "black",
+                         number.cex = .5,
+                         mar=c(0,0,1,0))
+dev.off()
 
 #all the mentalizing variables and the variables from the bsi-18, pai-bor, ders and tpm.
 ```
 Psychopathology & Mentalizing
-```{r mylatextable10, results = "asis"}
+```{r}
 table10 <- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "tpm_boldness", "tpm_disinhibition", "tpm_meanness", "tpm_total")])
-stargazer(table10, align=TRUE,column.sep.width = "-8pt", font.size="tiny")
+
+png(filename=paste0(outputdir,"psychopathology_mentalizing_corrplot.png"),
+    width=7,height=7,units="in",res=300,bg="transparent")
+corrplot::corrplot.mixed(table10,
+                         lower = "number",
+                         lower.col = "black",
+                         upper = "ellipse",
+                         order="hclust",
+                        # cl.lim = -1:1,
+                         tl.pos = "lt",
+                         tl.cex = .5,
+                         tl.col = "black",
+                         number.cex = .5,
+                         mar=c(0,0,1,0))
+dev.off()
 ```
 Sense of Power, Agent/Patient perspective, social interaction anxiety, & mentalizing
-```{r mylatextable11, results = "asis"}
+```{r}
 table11<- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "sense_of_power", "pq_agent", "pq_recipient", "social_interaction_anxiety")])
-stargazer(table11, align=TRUE,column.sep.width = "-8pt", font.size="tiny")
+
+png(filename=paste0(outputdir,"power_agent_patient_anxiety_mentalizing_corrplot.png"),
+    width=7,height=7,units="in",res=300,bg="transparent")
+corrplot::corrplot.mixed(table11,
+                         lower = "number",
+                         lower.col = "black",
+                         upper = "ellipse",
+                         order="hclust",
+                        # cl.lim = -1:1,
+                         tl.pos = "lt",
+                         tl.cex = .5,
+                         tl.col = "black",
+                         number.cex = .5,
+                         mar=c(0,0,1,0))
+dev.off()
 
 #can't find social anxiety
 ```
 
 Big 5 and Mentalizing
-```{r mylatextable12, results = "asis"}
+```{r}
 table12<- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "masc_accuracy", "masc_no_ment", "masc_over_ment", "masc_under_ment", "tipi_agreeableness", "tipi_conscientiousness", "tipi_emotional_stability", "tipi_extroversion", "tipi_openness")])
 
-stargazer(table12, align=TRUE,column.sep.width = "-8pt", font.size="tiny")
+png(filename=paste0(outputdir,"big_5_mentalizing_corrplot.png"),
+    width=7,height=7,units="in",res=300,bg="transparent")
+corrplot::corrplot.mixed(table12,
+                         lower = "number",
+                         lower.col = "black",
+                         upper = "ellipse",
+                         order="hclust",
+                        # cl.lim = -1:1,
+                         tl.pos = "lt",
+                         tl.cex = .5,
+                         tl.col = "black",
+                         number.cex = .5,
+                         mar=c(0,0,1,0))
+dev.off()
 
 
 ```
