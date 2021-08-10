@@ -304,7 +304,7 @@ dev.off()
 ```
 Psychopathology & Mentalizing
 ```{r}
-table10 <- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "tpm_boldness", "tpm_disinhibition", "tpm_meanness", "tpm_total")])
+table10 <- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "rfq_certainty", "rfq_uncertainty", "tpm_boldness", "tpm_disinhibition", "tpm_meanness", "tpm_total")])
 
 png(filename=paste0(outputdir,"psychopathology_mentalizing_corrplot.png"),
     width=7,height=7,units="in",res=300,bg="transparent")
@@ -323,7 +323,7 @@ dev.off()
 ```
 Sense of Power, Agent/Patient perspective, social interaction anxiety, & mentalizing
 ```{r}
-table11<- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err", "sense_of_power", "pq_agent", "pq_recipient", "social_interaction_anxiety")])
+table11<- cor(updated_plotting[,c("director_alt","director_ego", "dot_alt_rt","dot_ego_rt","dot_alt_err", "dot_ego_err",  "masc_accuracy", "masc_no_ment", "masc_over_ment", "masc_under_ment", "sense_of_power", "pq_agent", "pq_recipient", "social_interaction_anxiety")])
 
 png(filename=paste0(outputdir,"power_agent_patient_anxiety_mentalizing_corrplot.png"),
     width=7,height=7,units="in",res=300,bg="transparent")
